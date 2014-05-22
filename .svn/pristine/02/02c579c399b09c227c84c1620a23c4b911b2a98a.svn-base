@@ -1,0 +1,110 @@
+function hideNotify(){
+	document.getElementById("notify").style.display = "none";
+}
+		
+
+		
+function recupQT(qt,mtt,i) {
+	var quantite = qt.value;
+	var montant = mtt;
+	var index = i;
+	var tmontant = quantite*montant;
+						
+	switch(index){
+		case "id1" : document.getElementById("id1").textContent = tmontant.toFixed(2) + "€"; break;	
+		case "id2" : document.getElementById("id2").textContent = tmontant.toFixed(2) + "€"; break;	
+		case "id3" : document.getElementById("id3").textContent = tmontant.toFixed(2) + "€"; break;	
+		case "id4" : document.getElementById("id4").textContent = tmontant.toFixed(2) + "€"; break;
+		default : break;	
+	}	
+				
+	var MT = 0;
+	var i = 1;
+	for (i = 1; i <= 4; i++){
+		MT += parseFloat(document.getElementById("id"+i).textContent);
+	}
+
+	document.getElementById("montantTotal").textContent = MT.toFixed(2) + "€";	
+}
+	
+
+	
+function verifDate(date){
+
+	var format_date = /^(\d{1,2}\/){2}\d{4}$/;
+	if(date.value != "")
+	{
+		if(!format_date.test(date.value))
+		{
+			alert('\tDate non valable !\nLe format doit etre jj/mm/aaaa');
+			document.getElementById("txtDateHF").style.backgroundColor = '#b94a48';
+		}
+		else
+		{
+			var date_temp = date.value.split('/');
+			if(date_temp[0] < 1 || date_temp[0] > 31 || date_temp[1] < 1 || date_temp[1] > 12)
+			{
+				alert('\tDate non valable !\nLe jour ou le mois n\'est pas valable');
+				document.getElementById("txtDateHF").style.backgroundColor = '#b94a48';
+			}
+			else{document.getElementById("txtDateHF").style.backgroundColor = "white";}	
+			}
+	}
+	else{document.getElementById("txtDateHF").style.backgroundColor = "white";}
+}
+	
+
+	
+function verifInt(nbr){
+	if(isNaN(nbr.value)){alert('la valeur entrée n\'est pas un nombre');}
+}
+
+
+
+function divap(anId, type){
+	node = document.getElementById(anId);
+	if (type == "block")
+	{
+				
+		node.style.display = "block";
+		node.style.height = "auto";			// Optionnel rétablir la hauteur
+	}
+
+	if (type == "none")
+	{
+		// Contenu montré le cacher
+		node.style.display = "none";
+		node.style.height = "auto";			// Optionnel rétablir la hauteur
+	}
+}
+
+
+
+function verifLogin() {
+	var login = document.forms['frmSaisie'].elements['login'];
+	
+	if(login.value == ""){
+		document.getElementById('error-title').innerHTML = "Attention!";
+		document.getElementById('error-content').innerHTML = "Veuillez saisir votre login";
+		divap("alert-error", "block");
+	}
+	if(login.value != ""){
+		divap("alert-error", "none");
+	}
+				
+}
+
+
+
+function verifPass(){
+	var pass =document.forms['frmSaisie'].elements['mdp'];
+	if(pass.value == ""){
+		document.getElementById('error-title').innerHTML = "Attention!";
+		document.getElementById('error-content').innerHTML = "Veuillez saisir votre mot de passe";
+		divap("alert-error", "block");
+	}
+	if(pass.value != ""){
+		divap("alert-error", "none");
+	}
+				
+}		

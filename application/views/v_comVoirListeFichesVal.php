@@ -1,0 +1,110 @@
+<?php
+	$this->load->helper('url');
+	$path = base_url();
+	
+?>
+<div id="contenu">
+	<h2>Liste des fiches de frais validé et mis en paiement</h2>
+	 	
+	<?php if(!empty($notify)) echo '<p id="notify" >'.$notify.'</p>';?>
+	 
+	<table class="listeLegere", id="tableau">
+		<thead>
+		<h3>Tableau des frais Validé: </h3>
+			<tr>
+				<th>Sélection</th>
+				<th >Nom</th>
+				<th >Mois</th>
+				<th >Montant</th>  
+				<th >Date modif</th>  
+				<th >Etat</th>  
+				<th >Commentaire</th>              
+			</tr>
+		</thead>
+		<tbody>
+          
+		  
+		<?php  
+			echo '<form name="box" method="post" action="'.$path.'c_comptable/misePaiementFiche">';
+				$i=1;
+				
+			foreach( $lesFichesSign as $uneFiche) 
+			{
+				if($uneFiche['idEtat'] == 'VA'){
+					$modLink   = '';
+					$signeLink = '';
+					echo
+					'<tr>
+						<td class="selection" align="center"><input type="hidden" name="mois[]" value="'.$uneFiche['mois'].'"><input type="hidden" name="id[]" value="'.$i.'"><input type="hidden" name="idVisiteur[]" value="'.$uneFiche['idVisiteur'].'"><input type="checkbox" name="slct[]" value="'.$i.'" ></td>
+						<td class="perso" align="center">'.$uneFiche['prenom'].' '.$uneFiche['nom'].'</td>
+						<td class="formu" align="center">'.$uneFiche['mois'].'</td>
+						
+						<!-- <td class="formu" align="center"><form method="POST" action="'.$path.'c_comptable/afficheFraisVal"><input type="hidden" name="mois" value="'.$uneFiche['mois'].'"><input type="hidden" name="idVisiteur" value="'.$uneFiche['idVisiteur'].'"><input type="submit" value="'.$uneFiche['mois'].'"></form></td> -->
+						<!-- <td class="date">'.anchor('c_comptable/mpFiche/'.$uneFiche['mois'],$uneFiche['mois'],'title="Consulter la fiche"').'</td> -->
+						
+						<td class="montant" align="center">'.$uneFiche['montantValide'].'</td>
+						<td class="date">'.$uneFiche['dateModif'].'</td>
+						<td class="etat" align="center">'.$uneFiche['idEtat'].'</td>
+						<td class="libelle">'.$uneFiche['Commentaire'].'</td>
+					</tr>';
+					
+					$i++;
+				}
+			}
+			
+		?>	
+		
+		<tr><td>Tout Cocher<input type="checkbox" onclick="return cocherOuDecocherTout(this);" /></td><td COLSPAN=7 align = center> <input type="submit" value="Mettre en paiement"> </td></tr> 
+			</form>
+		</tbody>
+    </table>
+	
+	<br/>
+	<br/>
+	<table class="listeLegere", id="tableau2">
+		<thead>
+		<h3>Tableau des frais mis en paiement: </h3>
+			<tr>
+				<th>Sélection</th>
+				<th >Nom</th>
+				<th >Mois</th>
+				<th >Montant</th>  
+				<th >Date modif</th>  
+				<th >Etat</th>  
+				<th >Commentaire</th>              
+			</tr>
+		</thead>
+		<tbody>
+          
+		<?php    
+		echo '<form name="box2" method="post" action="'.$path.'c_comptable/rembourseFiche">';
+		$i = 1;
+			foreach( $lesFichesSign as $uneFiche) 
+			{
+				if($uneFiche['idEtat'] == 'MP'){
+					$modLink   = '';
+					$signeLink = '';
+					echo
+					'<tr>
+						<td class="selection" align="center"><input type="hidden" name="mois[]" value="'.$uneFiche['mois'].'"><input type="hidden" name="id[]" value="'.$i.'"><input type="hidden" name="idVisiteur[]" value="'.$uneFiche['idVisiteur'].'"><input type="checkbox" name="slct[]" value="'.$i.'" ></td>
+						<td class="perso" align="center">'.$uneFiche['prenom'].' '.$uneFiche['nom'].'</td>
+						<td class="formu" align="center">'.$uneFiche['mois'].'</td>
+						<!-- <td class="formu" align="center"><form method="POST" action="'.$path.'c_comptable/afficheFraisMP"><input type="hidden" name="mois" value="'.$uneFiche['mois'].'"><input type="hidden" name="idVisiteur" value="'.$uneFiche['idVisiteur'].'"><input type="submit" value="'.$uneFiche['mois'].'"></form></td> -->
+
+						<!-- <td class="date">'.anchor('c_comptable/valFiche/'.$uneFiche['mois'],$uneFiche['mois'],'title="Consulter la fiche"').'</td> -->
+						<td class="montant" align="center">'.$uneFiche['montantValide'].'</td>
+						<td class="date">'.$uneFiche['dateModif'].'</td>
+						<td class="etat" align="center">'.$uneFiche['idEtat'].'</td>
+						<td class="libelle">'.$uneFiche['Commentaire'].'</td>
+					</tr>';
+					$i++;
+				}
+			}
+		?>	  
+			<tr>
+				<td>Tout Cocher<input type="checkbox" onclick="return cocherOuDecocherTout2(this);" /></td>
+				<td COLSPAN=7 align = center> <input type="submit" value="Remboursée"></td>
+			</tr> 
+			</form>
+		</tbody>
+    </table>

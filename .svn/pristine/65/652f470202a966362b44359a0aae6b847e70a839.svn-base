@@ -1,0 +1,51 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class A_comptable extends CI_Model {
+
+    function __construct()
+    {
+        // Call the Model constructor
+        parent::__construct();
+
+		// chargement du modèle d'accès aux données qui est utile à toutes les méthodes
+		$this->load->model('dataAccess');
+    }
+
+	/**
+	 * Accueil du compatable
+	 * La fonction intègre un mécanisme de contrôle d'existence des 
+	 * fiches de frais sur les 6 derniers mois. 
+	 * Si l'une d'elle est absente, elle est créée
+	*/
+	public function accueil()
+	{	// TODO : Contrôler que toutes les valeurs de $unMois sont valides (chaine de caractère dans la BdD)
+	
+		// chargement du modèle contenant les fonctions génériques
+		$this->load->model('functionsLib');
+		
+		// obtention de l'id de l'utilisateur mémorisé en session
+		$idVisiteur = $this->session->userdata('idUser');
+		// envoie de la vue accueil du visiteur
+		$this->templates->load('t_comptable', 'v_comAccueil');
+	}
+
+	public function voirFiches(){
+		// chargement du modèle contenant les fonctions génériques
+		$this->load->model('functionsLib');
+
+		$data['lesFichesSign'] = $this->dataAccess->getLignesFortaitSign();
+		$this->templates->load('t_comptable', 'v_comVoirListeFichesSign', $data);
+	}
+
+	public function valFiche($mois, $idVisiteur){
+		
+		$data['numAnnee'] = substr( $mois,0,4);
+		$data['numMois'] = substr( $mois,4,2);
+		$data['lesFraisHorsForfait'] = $this->dataAccess->getLesLignesHorsForfait($idVisiteur,$mois);
+		$data['lesFraisForfait'] = $this->dataAccess->getLesLignesForfait($idVisiteur,$mois);		
+
+		$this->templates->load('t_comptable', 'v_comVoirListeFrais', $data);
+	}
+	
+	
+}

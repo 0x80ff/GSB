@@ -1,0 +1,138 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * Contr√¥leur du module COMPTABLE de l'application
+*/
+class C_comptable extends CI_Controller {
+
+	/**
+	 * Aiguillage des demandes faites au contr√¥leur
+	 * La fonction _remap est une fonctionnalit√© offerte par CI destin√©e √† remplacer 
+	 * le comportement habituel de la fonction index. Gr√¢ce √† _remap, on dispose
+	 * d'une fonction unique capable d'accepter un nombre variable de param√®tres.
+	 *
+	 * @param $action : l'action demand√©e par le visiteur
+	 * @param $params : les √©ventuels param√®tres transmis pour la r√©alisation de cette action
+	*/
+	public function _remap($action, $params = array())
+	{
+		// chargement du mod√®le d'authentification
+		$this->load->model('authentif');
+		
+		// contr√¥le de la bonne authentification de l'utilisateur
+		if (!$this->authentif->estConnecte()) 
+		{
+			// l'utilisateur n'est pas authentifi√©, on envoie la vue de connexion
+			$data = array();
+			$this->templates->load('t_connexion', 'v_connexion', $data);
+		}
+		else
+		{
+			// Aiguillage selon l'action demand√©e 
+			// CI a trait√© l'URL au pr√©alable de sorte √† toujours renvoyer l'action "index"
+			// m√™me lorsqu'aucune action n'est exprim√©e
+			if ($action == 'index')				// index demand√© : on active la fonction accueil du mod√®le comptable
+			{
+				$this->load->model('a_comptable');
+
+				$this->a_comptable->accueil();
+			}
+			elseif($action == 'gesFiches'){
+				$this->load->model('a_comptable');
+				$this->a_comptable->voirFiches();
+			}
+			elseif($action == 'gesPaiement'){
+				$this->load->model('a_comptable');
+				$this->a_comptable->voirValides();
+			}
+			elseif ($action == 'valFiche')		// voirFiche demand√© : on active la fonction voirFiche du mod√®le authentif
+			{	// TODO : contr√¥ler la validit√© du second param√®tre (mois de la fiche √† consulter)
+				$idVisiteur = $_POST['idVisiteur'];
+				$mois = $_POST['mois'];	
+
+				//----CREEER LE FORMULAIRE DANS COMVOIRFICHESIGN ET LA FONCTION DAFFICHAGE ET DE VALIDATION
+				$this->load->model('a_comptable');
+
+				// obtention du mois de la fiche √† modifier qui doit avoir √©t√© transmis
+				// en second param√®tre
+				//$mois = $params[0];
+				//$idVisiteur = $param[1];
+				// m√©morisation du mode modification en cours 
+				// on m√©morise le mois de la fiche en cours de modification
+				$this->session->set_userdata('mois', $mois);
+
+				$this->a_comptable->valFiche($mois, $idVisiteur);
+			}
+			elseif ($action == 'afficheFraisVal')		// voirFiche demandÈ : on active la fonction voirFiche du modËle authentif
+			{	// TODO : contrÙler la validitÈ du second paramËtre (mois de la fiche ‡ consulter)
+			$idVisiteur = $_POST['idVisiteur'];
+			$mois = $_POST['mois'];
+			
+			//----CREEER LE FORMULAIRE DANS COMVOIRFICHESIGN ET LA FONCTION DAFFICHAGE ET DE VALIDATION
+			$this->load->model('a_comptable');
+			
+			// obtention du mois de la fiche ‡ modifier qui doit avoir ÈtÈ transmis
+			// en second paramËtre
+			//$mois = $params[0];
+			//$idVisiteur = $param[1];
+			// mÈmorisation du mode modification en cours
+			// on mÈmorise le mois de la fiche en cours de modification
+			$this->session->set_userdata('mois', $mois);
+			
+			$this->a_comptable->mpVoirFiche($mois, $idVisiteur);
+			}
+			elseif($action == 'validationFiche'){
+				$idVisiteur = $_POST['idVisiteur'];
+				$mois = $_POST['mois'];
+				$action = $_POST['val'];
+				$commentaire = $_POST['commentaire'];
+			
+				$this->load->model('a_comptable');
+				$this->a_comptable->validationFiches($idVisiteur, $mois, $action, $commentaire);
+			}
+			elseif($action == 'misePaiementFiche'){
+					
+				$idVisiteur = $_POST['idVisiteur'];
+				$mois = $_POST['mois'];
+			
+				$this->load->model('a_comptable');
+				$this->a_comptable->misePFiche($mois, $idVisiteur);
+			}
+			elseif ($action == 'afficheFraisMP')		// voirFiche demandÈ : on active la fonction voirFiche du modËle authentif
+			{	// TODO : contrÙler la validitÈ du second paramËtre (mois de la fiche ‡ consulter)
+			$idVisiteur = $_POST['idVisiteur'];
+			$mois = $_POST['mois'];
+			
+			//----CREEER LE FORMULAIRE DANS COMVOIRFICHESIGN ET LA FONCTION DAFFICHAGE ET DE VALIDATION
+			$this->load->model('a_comptable');
+			
+			// obtention du mois de la fiche ‡ modifier qui doit avoir ÈtÈ transmis
+			// en second paramËtre
+			//$mois = $params[0];
+			//$idVisiteur = $param[1];
+			// mÈmorisation du mode modification en cours
+			// on mÈmorise le mois de la fiche en cours de modification
+			$this->session->set_userdata('mois', $mois);
+			
+			$this->a_comptable->rbVoirFiche($mois, $idVisiteur);
+			}
+			elseif($action == 'rembourseFiche'){
+					
+				$idVisiteur = $_POST['idVisiteur'];
+				$mois = $_POST['mois'];
+			
+				$this->load->model('a_comptable');
+				$this->a_comptable->miseRBFiche($mois, $idVisiteur);
+			}
+			elseif ($action == 'deconnecter')	// deconnecter demand√© : on active la fonction deconnecter du mod√®le authentif
+			{
+				$this->load->model('authentif');
+				$this->authentif->deconnecter();
+			}
+			else								// dans tous les autres cas, on envoie la vue par d√©faut pour l'erreur 404
+			{
+				show_404();
+			}
+		}
+	}
+}
